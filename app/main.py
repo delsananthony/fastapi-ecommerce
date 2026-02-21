@@ -5,7 +5,10 @@ from fastapi import FastAPI
 
 from datetime import datetime, timezone
 from typing import Annotated, Any, Literal, Optional
-from .db.mongo import get_db, oid_str, shutdown_db
+from app.api.v1.customers import router as customer_router
+from app.db.mongo import get_db, oid_str, shutdown_db
+from app.schema.customer_schema import CustomerDetails, Customer
+
 from pydantic import BaseModel, BeforeValidator, Field
 
 SALES_COLL = "sales"
@@ -24,21 +27,12 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 
+app.include_router(customer_router)
+
 def utcnow() -> datetime:
     return datetime.now(timezone.utc)
 
 PyObjectId = Annotated[str, BeforeValidator(str)]
-
-class Customer(BaseModel):
-    name: str
-    email: str
-
-class CustomerDetails(BaseModel):
-    # id: Optional[PyObjectId] = Field(alias="_id", default=None)
-    id: str
-    name: str
-    email: str
-    created_at: datetime
 
 class Product(BaseModel):
     id: Optional[PyObjectId] = Field(alias="_id", default=None)
@@ -57,21 +51,6 @@ class Sale(BaseModel):
 @app.get("/")
 async def root():
     return {"message": "Hello World"}
-
-@app.post("/customers", response_model=CustomerDetails)
-async def create_customer(name: str, email: str):
-    db = get_db()
-    customer_doc: dict[str, Any] = {
-        "name": name,
-        "email": email,
-        "created_at": utcnow(),
-    }
-    result = await db["customers"].insert_one(customer_doc)
-    res = oid_str(result.inserted_id)
-    print(res)
-    print(result)
-    # return {"id": res, **customer_doc}
-    return CustomerDetails(id=oid_str(result.inserted_id), **customer_doc)
 
 @app.post("/products")
 async def create_product(name: str, price: float):
