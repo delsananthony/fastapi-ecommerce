@@ -1,4 +1,5 @@
-from typing import Any, Mapping
+from typing import Any, Mapping,Annotated
+from fastapi import Depends
 
 from bson import ObjectId
 from pymongo.asynchronous.database import AsyncDatabase
@@ -13,6 +14,7 @@ type Database = AsyncDatabase[Any, Mapping[str, Any]]
 mongo_client = AsyncMongoClient[Mapping[str, Any]](MONGODB_URI)
 db: Database | None = None
 
+
 def get_db() -> Database:
     return mongo_client[DATABASE_NAME]
 
@@ -26,3 +28,5 @@ def oid_str(oid: ObjectId) -> str:
 
 def parse_object_id(ticket_id: str) -> ObjectId:
     return ObjectId(ticket_id)
+
+MongoDatabase = Annotated[Database, Depends(get_db)]
