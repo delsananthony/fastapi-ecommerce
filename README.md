@@ -1,5 +1,8 @@
 # E-Commerece
 
+## Project Duration
+- 3 months, started: 02/21/2026 end: 05/21/2026
+
 ## Todo
 - [ ] CRUD for customer
 - [] Simple Order to checkout workflow
@@ -12,6 +15,14 @@
 
 ## Issues
 1. ObjectId is not iterable - solution is to use a pydantic base model to return a value, no directly return it as a dictionary
+
+
+## Wants
+- JWT/oAuth for secure login
+- Check what is SSL termination, and how does it affect API performance
+- Check what is rate limiting/throttling, and how does it affect API performance
+- Caching strategy
+- Message Queues
 
 
 ## Links Used
