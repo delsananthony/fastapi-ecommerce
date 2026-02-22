@@ -30,3 +30,6 @@
 - [Fastapi Tutorial](https://fastapi.tiangolo.com/tutorial/)
 - [Fastapi + mongodb](https://www.mongodb.com/docs/languages/python/pymongo-driver/current/integrations/fastapi-integration/)
 - [Mongodb ObjectId Handling](https://medium.com/@madhuri.pednekar/handling-mongodb-objectid-in-python-fastapi-4dd1c7ad67cd)
+- [pwdlib](https://frankie567.github.io/pwdlib/)
+- [jwt](https://pyjwt.readthedocs.io/en/stable/)
+- [Mongodb](https://www.w3schools.com/mongodb/mongodb_get_started.php)
