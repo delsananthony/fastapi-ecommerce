@@ -1,13 +1,17 @@
-from __future__ import annotations
+# from __future__ import annotations
 from contextlib import asynccontextmanager
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
 
 
 from datetime import datetime, timezone
 from typing import Annotated, Any, Literal, Optional
+
+from app.core.db import get_db, oid_str, shutdown_db
+from app.core.exception import ServiceValidationError
+from app.api.v1.auth import router as auth_router
 from app.api.v1.customers import router as customer_router
-from app.db.mongo import get_db, oid_str, shutdown_db
-from app.schema.customer_schema import CustomerDetails, Customer
+
 
 from pydantic import BaseModel, BeforeValidator, Field
 
@@ -25,9 +29,13 @@ async def lifespan(app: FastAPI):
 
     await shutdown_db()
 
+
 app = FastAPI(lifespan=lifespan)
 
+
+app.include_router(auth_router, prefix="/auth", tags=["auth"])
 app.include_router(customer_router)
+
 
 def utcnow() -> datetime:
     return datetime.now(timezone.utc)
@@ -47,10 +55,18 @@ class Sale(BaseModel):
     amount: float
     updated_at: datetime
 
+@app.exception_handler(ServiceValidationError)
+async def service_error_handler(request: Request, exc: ServiceValidationError):
+    return JSONResponse(
+        status_code=400,
+        content={"detail": exc.message},
+    )
 
-@app.get("/")
+
+@app.get("/healthcheck")
 async def root():
-    return {"message": "Hello World"}
+    return {"status": "Good"}
+
 
 @app.post("/products")
 async def create_product(name: str, price: float):

@@ -1,7 +1,6 @@
 from app.core.utils import utcnow
-from app.db.mongo import MongoDatabase, oid_str, parse_object_id
+from app.core.db import MongoDatabase, oid_str, parse_object_id
 from app.schema.customer_schema import Customer, CustomerDetails
-from fastapi import Depends
 from typing import Any
 
 async def get_customers(db: MongoDatabase) -> list[CustomerDetails]:

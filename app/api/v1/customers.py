@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException, Depends
-from app.db.mongo import MongoDatabase
+from app.core.db import MongoDatabase
 from app.schema.customer_schema import Customer, CustomerDetails
 
 from app.services.customer_service import create_customer, get_customers, update_customer, archive_customer
